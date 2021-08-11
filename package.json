@@ -24,6 +24,7 @@
   "homepage": "https://github.com/vikingsurfeur/sport_mongodb_express#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "moongoose": "0.0.5",
     "nodemon": "^2.0.12"
   }
 }

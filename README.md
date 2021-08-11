@@ -8,6 +8,8 @@ Compass and Postman for local testing:
     Postman -> https://www.postman.com/downloads/
     Compass -> https://www.mongodb.com/fr-fr/products/compass
 
+Moongoose -> https://mongoosejs.com/
+
 Nodemon -> https://github.com/remy/nodemon
 ````
 
@@ -15,6 +17,7 @@ Nodemon -> https://github.com/remy/nodemon
 ````bash
 npm install or npm update
 npm install express
+npm install mongoose
 npx nodemon 'your index_file.js'
 ````
 
