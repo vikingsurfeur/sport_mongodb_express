@@ -2,10 +2,10 @@
 
 ## Dependencies
 ````bash
-Node -> https://nodejs.org/en/download/
+Node -> [a link](https://nodejs.org/en/download/)
 Compass and Postman for local testing:
-Postman -> https://www.postman.com/downloads/
-Compass -> https://www.mongodb.com/fr-fr/products/compass
+Postman -> [a link](https://www.postman.com/downloads/)
+Compass -> [a link](https://www.mongodb.com/fr-fr/products/compass)
 ````
 
 ### Command
