@@ -15,6 +15,6 @@ Nodemon -> https://github.com/remy/nodemon
 ````bash
 npm install or npm update
 npm install express
-npm install nodemon
+npx nodemon 'your index_file.js'
 ````
 
