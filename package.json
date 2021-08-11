@@ -1,30 +1,30 @@
 {
-  "name": "sport_mongodb_express",
-  "version": "1.0.0",
-  "description": "Manage a fitness center with mongoDB and Express",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/vikingsurfeur/sport_mongodb_express.git"
-  },
-  "keywords": [
-    "mongoDB",
-    "express",
-    "node",
-    "javascript"
-  ],
-  "author": "David Bouscarle",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/vikingsurfeur/sport_mongodb_express/issues"
-  },
-  "homepage": "https://github.com/vikingsurfeur/sport_mongodb_express#readme",
-  "dependencies": {
-    "express": "^4.17.1",
-    "moongoose": "0.0.5",
-    "nodemon": "^2.0.12"
-  }
+    "name": "sport_mongodb_express",
+    "version": "1.0.0",
+    "description": "Manage a fitness center with mongoDB and Express",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/vikingsurfeur/sport_mongodb_express.git"
+    },
+    "keywords": [
+        "mongoDB",
+        "express",
+        "node",
+        "javascript"
+    ],
+    "author": "David Bouscarle",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/vikingsurfeur/sport_mongodb_express/issues"
+    },
+    "homepage": "https://github.com/vikingsurfeur/sport_mongodb_express#readme",
+    "dependencies": {
+        "express": "^4.17.1",
+        "mongoose": "^5.13.6",
+        "nodemon": "^2.0.12"
+    }
 }
