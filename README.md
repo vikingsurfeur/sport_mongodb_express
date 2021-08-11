@@ -2,8 +2,8 @@
 
 ## Dependencies
 ````bash
-Node : [a link](https://nodejs.org/en/download/)
-Compass and Postman for local testing :
+Node [a link](https://nodejs.org/en/download/)
+Compass and Postman for local testing
 [a link](https://www.postman.com/downloads/)
 [a link](https://www.mongodb.com/fr-fr/products/compass)
 ````
