@@ -8,9 +8,9 @@ const userCreate = async (req, res) => {
         const NewUser = await new User({
             firstName: "Jean",
             lastName: "Reno",
-            DateOfBirth: new Date(1980, 1, 1),
+            dateOfBirth: new Date(),
             email: "j.reno@example.com",
-        });
+        }).save();
         res.json(NewUser);
     } catch (error) {
         res.json(error.message);

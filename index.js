@@ -4,11 +4,21 @@ const mongoose = require('mongoose');
 const models = require('./models');
 
 // Connecting to the database
-mongoose.connect('mongodb://localhost/sport_center', {
+require('dotenv').config();
+const uri = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PASSWORD}@${process.env.DB_SUFFIX}`;
+const connectionParameters = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
-});
+}
+
+mongoose.connect(uri, connectionParameters)
+    .then(() => {
+        console.log('Connected to database ')
+    })
+    .catch((error) => {
+        console.error(`Error connecting to the database. \n${error}`);
+    });
 
 // Create Express server
 const app = express();
