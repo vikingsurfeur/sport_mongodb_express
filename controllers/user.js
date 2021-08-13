@@ -38,6 +38,7 @@ const userCreate = async (req, res) => {
         if (req.role !== 'manager') {
             return res.json('unauthorized')
         }
+
         // if (NewUser) {
         //     res.json({
         //         status: true,
@@ -77,6 +78,11 @@ const userDelete = async (req, res) => {
                 message: 'No id provided',
             });
         }
+
+        if (req.role !== 'manager') {
+            return res.json('unauthorized')
+        }
+
         const User = req.app.get('models').User;
         const ToDeleteUser = await User.findById(req.body._id);
         await ToDeleteUser.remove();
@@ -95,11 +101,16 @@ const userUpdate = async (req, res) => {
                 message: 'No id provided or no data user provided',
             });
         }
+
+        if (req.role !== 'manager') {
+            return res.json('unauthorized')
+        }
+
         const User = req.app.get('models').User;
-        const ToModifyUser = await User.findById(req.body._id);
+        const toModifyUser = await User.findById(req.body._id);
         const toModifyKeys = Object.keys(req.body.toModifyUser);
         for (const key of toModifyKeys) {
-            ToModifyUser[key] = req.body.toModifyUser[key];
+            toModifyUser[key] = req.body.toModifyUser[key];
         }
         await toModifyUser.save();
         res.json('Successfully Updated');
