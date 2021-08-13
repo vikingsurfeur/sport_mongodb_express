@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const models = require('./models');
+const getRoleMiddleware = require('./utils/getRoleMiddleware');
 
 // Connecting to the database
 require('dotenv').config();
@@ -24,6 +25,7 @@ mongoose.connect(uri, connectionParameters)
 const app = express();
 app.set('models', models);
 app.use(express.json());
+app.use(getRoleMiddleware);
 
 // Require the User Route
 const userRoute = require('./routes/user');

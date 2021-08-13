@@ -1,5 +1,6 @@
 const encryptPassword = require('../utils/encryptPassword');
 const decryptPassword = require('../utils/decryptPassword');
+const e = require('express');
 
 const userGet = async (req, res) => {
     try {
@@ -33,6 +34,34 @@ const userCreate = async (req, res) => {
             salt, 
             hash,
         }).save();
+
+        if (req.role !== 'manager') {
+            return res.json('unauthorized')
+        }
+        // if (NewUser) {
+        //     res.json({
+        //         status: true,
+        //         message: 'Successfully created',
+        //     });
+            
+        //     const UserExist = await User.findOne({ email: req.body.email });
+        //     if (!UserExist) {
+        //         const NewUserExist = await new User({
+        //             firstName: req.body.firstName,
+        //             lastName: req.body.lastName,
+        //             dateOfBirth: req.body.dateOfBirth,
+        //             email: req.body.email,
+        //             token, 
+        //             salt, 
+        //             hash,
+        //         }).save();
+        //     } else {
+        //         res.json({
+        //             status: false,
+        //             message: 'User already exist',
+        //         });
+        //     }
+        // }
         res.json(NewUser);
     } catch (error) {
         res.json(error.message);
