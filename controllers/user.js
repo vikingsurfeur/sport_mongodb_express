@@ -34,8 +34,8 @@ const userDelete = async (req, res) => {
             });
         }
         const User = req.app.get('models').User;
-        const MyUser = await User.findById(req.body._id);
-        await MyUser.remove();
+        const ToDeleteUser = await User.findById(req.body._id);
+        await ToDeleteUser.remove();
         res.json('Successfully Deleted');
     } catch (error) {
         res.json(error.message);
@@ -43,4 +43,26 @@ const userDelete = async (req, res) => {
     }
 };
 
-module.exports = { userGet, userCreate, userDelete };
+const userUpdate = async (req, res) => {
+    try {
+        if (!req.body._id || !req.body.toModifyUser) {
+            return res.json({
+                status: false,
+                message: 'No id provided or no data user provided',
+            });
+        }
+        const User = req.app.get('models').User;
+        const ToModifyUser = await User.findById(req.body._id);
+        const toModifyKeys = Object.keys(req.body.toModifyUser);
+        for (const key of toModifyKeys) {
+            ToModifyUser[key] = req.body.toModifyUser[key];
+        }
+        await toModifyUser.save();
+        res.json('Successfully Updated');
+    } catch (error) {
+        res.json(error.message);
+        console.error(`Something get Wrong: \n${error.message}`);
+    }
+};
+
+module.exports = { userGet, userCreate, userDelete, userUpdate };
