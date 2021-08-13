@@ -1,3 +1,6 @@
+const encryptPassword = require('../utils/encryptPassword');
+const decryptPassword = require('../utils/decryptPassword');
+
 const userGet = async (req, res) => {
     try {
         const User = req.app.get('models').User;
@@ -11,12 +14,24 @@ const userGet = async (req, res) => {
 
 const userCreate = async (req, res) => {
     try {
+        if (!req.body.password) {
+            return res.json({
+                status: false,
+                message: 'No password provided',
+            });
+        }
+
+        const { token, salt, hash } = encryptPassword(req.body.password);
+
         const User = req.app.get('models').User;
         const NewUser = await new User({
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             dateOfBirth: req.body.dateOfBirth,
             email: req.body.email,
+            token, 
+            salt, 
+            hash,
         }).save();
         res.json(NewUser);
     } catch (error) {
@@ -65,4 +80,30 @@ const userUpdate = async (req, res) => {
     }
 };
 
-module.exports = { userGet, userCreate, userDelete, userUpdate };
+const userLogin = async (req, res) => {
+    try {
+        if (!req.body.email || !req.body.password) {
+            return res.json({
+                status: false,
+                message: 'No email or password provided',
+            });
+        }
+        const User = req.app.get('models').User;
+        const ToVerifyUser = await User.findOne({
+            email: req.body.email,
+        });
+        if (!ToVerifyUser) {
+            return res.json({
+                status: false,
+                message: 'User not found',
+            });
+        }
+        res.json(decryptPassword(ToVerifyUser, req.body.password));
+    }
+    catch (error) {
+        res.json(error.message);
+        console.error(`Something get Wrong: \n${error.message}`);
+    }
+};
+
+module.exports = { userGet, userCreate, userDelete, userUpdate, userLogin };

@@ -1,4 +1,4 @@
-const { userGet, userCreate, userDelete, userUpdate } = require('../controllers/user');
+const { userGet, userCreate, userDelete, userUpdate, userLogin } = require('../controllers/user');
 
 const userRoute = (app) => {
     // Read
@@ -9,6 +9,8 @@ const userRoute = (app) => {
     app.post('/user-delete', userDelete);
     // Update
     app.post('/user-update', userUpdate);
+    // Login
+    app.post('/user-login', userLogin);
 };
 
 module.exports = userRoute;

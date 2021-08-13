@@ -5,6 +5,9 @@ const UserSchema = new mongoose.Schema({
     lastName: { type: String, required : true },
     dateOfBirth: { type: Date, required : true },
     email: { type: String, required : true },
+    token: { type: String, required : true },
+    salt: { type: String, required : true },
+    hash: { type: String, required : true },
 });
 
 const User = new mongoose.model('User', UserSchema);
