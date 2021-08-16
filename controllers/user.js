@@ -1,6 +1,7 @@
 const encryptPassword = require('../utils/encryptPassword');
 const decryptPassword = require('../utils/decryptPassword');
 
+// GET
 const userGet = async (req, res) => {
     try {
         const User = req.app.get('models').User;
@@ -12,6 +13,7 @@ const userGet = async (req, res) => {
     }
 };
 
+// CREATE
 const userCreate = async (req, res) => {
     if (!req.body.password) {
         return res.json({
@@ -68,6 +70,7 @@ const userCreate = async (req, res) => {
     }
 };
 
+//DELETE
 const userDelete = async (req, res) => {
     if (!req.body._id) {
         return res.json({
@@ -99,6 +102,7 @@ const userDelete = async (req, res) => {
     }
 };
 
+// UPDATE
 const userUpdate = async (req, res) => {
     if (!req.body._id || !req.body.toModifyUser) {
         return res.json({
@@ -135,6 +139,7 @@ const userUpdate = async (req, res) => {
     }
 };
 
+// LOGIN
 const userLogin = async (req, res) => {
     if (!req.body.email || !req.body.password) {
         return res.json({

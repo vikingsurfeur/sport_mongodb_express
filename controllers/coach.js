@@ -3,7 +3,16 @@ const encryptPassword = require('../utils/encryptPassword');
 const coachGet = async (req, res) => {
     try {
         const Coach = req.app.get('models').Coach;
-        const CoachList = await Coach.find().populate('user');
+        let CoachList;
+
+        if (req.query.discipline) {
+            CoachList = await Coach.find({
+                discipline: req.query.discipline,
+            });
+            CoachList = await Coach.find().populate('user');
+        } else {
+            CoachList = await Coach.find().populate('user');
+        }
 
         if (!CoachList) {
             return res.json({
