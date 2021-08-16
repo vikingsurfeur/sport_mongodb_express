@@ -1,6 +1,5 @@
 const encryptPassword = require('../utils/encryptPassword');
 const decryptPassword = require('../utils/decryptPassword');
-const e = require('express');
 
 const userGet = async (req, res) => {
     try {
@@ -14,14 +13,18 @@ const userGet = async (req, res) => {
 };
 
 const userCreate = async (req, res) => {
-    try {
-        if (!req.body.password) {
-            return res.json({
-                status: false,
-                message: 'No password provided',
-            });
-        }
+    if (!req.body.password) {
+        return res.json({
+            status: false,
+            message: 'No password provided',
+        });
+    }
 
+    if (req.role !== 'manager') {
+        return res.json('unauthorized')
+    }
+
+    try {
         const { token, salt, hash } = encryptPassword(req.body.password);
 
         const User = req.app.get('models').User;
@@ -34,10 +37,6 @@ const userCreate = async (req, res) => {
             salt, 
             hash,
         }).save();
-
-        if (req.role !== 'manager') {
-            return res.json('unauthorized')
-        }
 
         // if (NewUser) {
         //     res.json({
@@ -65,69 +64,86 @@ const userCreate = async (req, res) => {
         // }
         res.json(NewUser);
     } catch (error) {
-        res.json(error.message);
-        console.error(`Something get Wrong: \n${error.message}`);
+        return res.json(error.message);
     }
 };
 
 const userDelete = async (req, res) => {
+    if (!req.body._id) {
+        return res.json({
+            status: false,
+            message: 'No id provided',
+        });
+    }
+
+    if (req.role !== 'manager') {
+        return res.json('unauthorized')
+    }
+
     try {
-        if (!req.body._id) {
+        const User = req.app.get('models').User;
+        const ToDeleteUser = await User.findById(req.body._id);
+
+        if (!ToDeleteUser) {
             return res.json({
                 status: false,
-                message: 'No id provided',
+                message: 'User not found',
             });
         }
 
-        if (req.role !== 'manager') {
-            return res.json('unauthorized')
-        }
-
-        const User = req.app.get('models').User;
-        const ToDeleteUser = await User.findById(req.body._id);
         await ToDeleteUser.remove();
+
         res.json('Successfully Deleted');
     } catch (error) {
-        res.json(error.message);
-        console.error(`Something get Wrong: \n${error.message}`);
+        return res.json(error.message);
     }
 };
 
 const userUpdate = async (req, res) => {
+    if (!req.body._id || !req.body.toModifyUser) {
+        return res.json({
+            status: false,
+            message: 'No id provided or no data user provided',
+        });
+    }
+
+    if (req.role !== 'manager') {
+        return res.json('unauthorized')
+    }
+
     try {
-        if (!req.body._id || !req.body.toModifyUser) {
+        const User = req.app.get('models').User;
+        const toModifyUser = await User.findById(req.body._id);
+
+        if (!toModifyUser) {
             return res.json({
                 status: false,
-                message: 'No id provided or no data user provided',
+                message: 'No user found',
             });
         }
 
-        if (req.role !== 'manager') {
-            return res.json('unauthorized')
-        }
-
-        const User = req.app.get('models').User;
-        const toModifyUser = await User.findById(req.body._id);
         const toModifyKeys = Object.keys(req.body.toModifyUser);
         for (const key of toModifyKeys) {
             toModifyUser[key] = req.body.toModifyUser[key];
         }
+
         await toModifyUser.save();
+        
         res.json('Successfully Updated');
     } catch (error) {
-        res.json(error.message);
-        console.error(`Something get Wrong: \n${error.message}`);
+        return res.json(error.message);
     }
 };
 
 const userLogin = async (req, res) => {
+    if (!req.body.email || !req.body.password) {
+        return res.json({
+            status: false,
+            message: 'No email or password provided',
+        });
+    }
+
     try {
-        if (!req.body.email || !req.body.password) {
-            return res.json({
-                status: false,
-                message: 'No email or password provided',
-            });
-        }
         const User = req.app.get('models').User;
         const ToVerifyUser = await User.findOne({
             email: req.body.email,
@@ -141,8 +157,7 @@ const userLogin = async (req, res) => {
         res.json(decryptPassword(ToVerifyUser, req.body.password));
     }
     catch (error) {
-        res.json(error.message);
-        console.error(`Something get Wrong: \n${error.message}`);
+        return res.json(error.message);
     }
 };
 

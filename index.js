@@ -27,9 +27,13 @@ app.set('models', models);
 app.use(express.json());
 app.use(getRoleMiddleware);
 
-// Require the User Route
+// Require Routes
 const userRoute = require('./routes/user');
+const customerRoute = require('./routes/customer');
+const coachRoute = require('./routes/coach');
 userRoute(app);
+customerRoute(app);
+coachRoute(app);
 
 // Localhost port 3000
 app.listen(3000, () => {
