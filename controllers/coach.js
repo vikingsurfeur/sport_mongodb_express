@@ -1,5 +1,6 @@
 const encryptPassword = require('../utils/encryptPassword');
 
+// READ
 const coachGet = async (req, res) => {
     try {
         const Coach = req.app.get('models').Coach;
@@ -27,6 +28,7 @@ const coachGet = async (req, res) => {
     }
 }
 
+// CREATE
 const coachCreate = async (req, res) => {
     if (!req.body.password) {
         return res.json({
@@ -49,6 +51,7 @@ const coachCreate = async (req, res) => {
             lastName: req.body.lastName,
             dateOfBirth: req.body.dateOfBirth,
             email: req.body.email,
+            role: "coach",
             token: token,
             salt: salt,
             hash: hash,
@@ -64,6 +67,7 @@ const coachCreate = async (req, res) => {
     }
 }
 
+// UPDATE
 const coachUpdate = async (req, res) => {
     if (req.role !== 'manager') {
         return res.json('unauthorized')
@@ -105,6 +109,7 @@ const coachUpdate = async (req, res) => {
     }
 }
 
+// DELETE
 const coachDelete = async (req, res) => {
     if (!req.body._id) {
         return res.json({

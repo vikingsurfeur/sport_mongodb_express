@@ -1,9 +1,12 @@
 const encryptPassword = require('../utils/encryptPassword');
 
+// READ
 const customerGet = async (req, res) => {
     try {
         const Customer = req.app.get('models').Customer;
-        const CustomerList = await Customer.find().populate('user');
+        const CustomerList = await Customer.find()
+            .populate('user')
+            .populate('subscriptions');
 
         if (!CustomerList) {
             return res.json({
@@ -18,6 +21,7 @@ const customerGet = async (req, res) => {
     }
 }
 
+// CREATE
 const customerCreate = async (req, res) => {
     if (!req.body.password) {
         return res.json({
@@ -55,6 +59,7 @@ const customerCreate = async (req, res) => {
     }
 }
 
+// UPDATE
 const customerUpdate = async (req, res) => {
     if (req.role !== 'manager') {
         return res.json('unauthorized')
@@ -96,6 +101,7 @@ const customerUpdate = async (req, res) => {
     }
 }
 
+// DELETE
 const customerDelete = async (req, res) => {
     if (!req.body._id) {
         return res.json({

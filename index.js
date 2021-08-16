@@ -31,9 +31,11 @@ app.use(getRoleMiddleware);
 const userRoute = require('./routes/user');
 const customerRoute = require('./routes/customer');
 const coachRoute = require('./routes/coach');
+const subscription = require('./routes/subscription');
 userRoute(app);
 customerRoute(app);
 coachRoute(app);
+subscription(app);
 
 // Localhost port 3000
 app.listen(3000, () => {

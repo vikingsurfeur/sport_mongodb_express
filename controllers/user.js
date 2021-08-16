@@ -1,7 +1,7 @@
 const encryptPassword = require('../utils/encryptPassword');
 const decryptPassword = require('../utils/decryptPassword');
 
-// GET
+// READ
 const userGet = async (req, res) => {
     try {
         const User = req.app.get('models').User;
