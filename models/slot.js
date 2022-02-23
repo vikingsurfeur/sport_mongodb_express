@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const slotSchema = new mongoose.Schema({
+const SlotSchema = new mongoose.Schema({
     date: { type: Date, require: true },
     startHour: { type: String, require: true },
     endHour: { type: String, require: true },
@@ -12,4 +12,6 @@ const slotSchema = new mongoose.Schema({
     ],
 });
 
-module.exports = slotSchema;
+const Slot = new mongoose.model('Slot', SlotSchema);
+
+module.exports = Slot;

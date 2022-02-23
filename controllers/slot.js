@@ -1,7 +1,7 @@
 const e = require("express");
 
 // READ
-const slots = async (req, res) => {
+const slotGet = async (req, res) => {
 
     try {
         const Slots = await req.app.get('models').Slot;
@@ -173,4 +173,4 @@ const slotDelete = async (req, res) => {
     }
 }
 
-module.exports = { slots, slotCreate, slotBook, slotUpdate, slotDelete };
+module.exports = { slotGet, slotCreate, slotBook, slotUpdate, slotDelete };
