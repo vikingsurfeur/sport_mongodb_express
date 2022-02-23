@@ -1,10 +1,10 @@
-const encryptPassword = require('../utils/encryptPassword');
-const decryptPassword = require('../utils/decryptPassword');
+const encryptPassword = require("../utils/encryptPassword");
+const decryptPassword = require("../utils/decryptPassword");
 
 // READ
 const userGet = async (req, res) => {
     try {
-        const User = req.app.get('models').User;
+        const User = req.app.get("models").User;
         const MyUsers = await User.find();
         res.json(MyUsers);
     } catch (error) {
@@ -18,25 +18,25 @@ const userCreate = async (req, res) => {
     if (!req.body.password) {
         return res.json({
             status: false,
-            message: 'No password provided',
+            message: "No password provided",
         });
     }
 
-    if (req.role !== 'manager') {
-        return res.json('unauthorized')
+    if (req.role !== "manager") {
+        return res.json("unauthorized");
     }
 
     try {
         const { token, salt, hash } = encryptPassword(req.body.password);
 
-        const User = req.app.get('models').User;
+        const User = req.app.get("models").User;
         const NewUser = await new User({
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             dateOfBirth: req.body.dateOfBirth,
             email: req.body.email,
-            token, 
-            salt, 
+            token,
+            salt,
             hash,
         }).save();
 
@@ -45,7 +45,7 @@ const userCreate = async (req, res) => {
         //         status: true,
         //         message: 'Successfully created',
         //     });
-            
+
         //     const UserExist = await User.findOne({ email: req.body.email });
         //     if (!UserExist) {
         //         const NewUserExist = await new User({
@@ -53,8 +53,8 @@ const userCreate = async (req, res) => {
         //             lastName: req.body.lastName,
         //             dateOfBirth: req.body.dateOfBirth,
         //             email: req.body.email,
-        //             token, 
-        //             salt, 
+        //             token,
+        //             salt,
         //             hash,
         //         }).save();
         //     } else {
@@ -75,28 +75,28 @@ const userDelete = async (req, res) => {
     if (!req.body._id) {
         return res.json({
             status: false,
-            message: 'No id provided',
+            message: "No id provided",
         });
     }
 
-    if (req.role !== 'manager') {
-        return res.json('unauthorized')
+    if (req.role !== "manager") {
+        return res.json("unauthorized");
     }
 
     try {
-        const User = req.app.get('models').User;
+        const User = req.app.get("models").User;
         const ToDeleteUser = await User.findById(req.body._id);
 
         if (!ToDeleteUser) {
             return res.json({
                 status: false,
-                message: 'User not found',
+                message: "User not found",
             });
         }
 
         await ToDeleteUser.remove();
 
-        res.json('Successfully Deleted');
+        res.json("Successfully Deleted");
     } catch (error) {
         return res.json(error.message);
     }
@@ -107,22 +107,22 @@ const userUpdate = async (req, res) => {
     if (!req.body._id || !req.body.toModifyUser) {
         return res.json({
             status: false,
-            message: 'No id provided or no data user provided',
+            message: "No id provided or no data user provided",
         });
     }
 
-    if (req.role !== 'manager') {
-        return res.json('unauthorized')
+    if (req.role !== "manager") {
+        return res.json("unauthorized");
     }
 
     try {
-        const User = req.app.get('models').User;
+        const User = req.app.get("models").User;
         const toModifyUser = await User.findById(req.body._id);
 
         if (!toModifyUser) {
             return res.json({
                 status: false,
-                message: 'No user found',
+                message: "No user found",
             });
         }
 
@@ -132,8 +132,8 @@ const userUpdate = async (req, res) => {
         }
 
         await toModifyUser.save();
-        
-        res.json('Successfully Updated');
+
+        res.json("Successfully Updated");
     } catch (error) {
         return res.json(error.message);
     }
@@ -144,24 +144,23 @@ const userLogin = async (req, res) => {
     if (!req.body.email || !req.body.password) {
         return res.json({
             status: false,
-            message: 'No email or password provided',
+            message: "No email or password provided",
         });
     }
 
     try {
-        const User = req.app.get('models').User;
+        const User = req.app.get("models").User;
         const ToVerifyUser = await User.findOne({
             email: req.body.email,
         });
         if (!ToVerifyUser) {
             return res.json({
                 status: false,
-                message: 'User not found',
+                message: "User not found",
             });
         }
         res.json(decryptPassword(ToVerifyUser, req.body.password));
-    }
-    catch (error) {
+    } catch (error) {
         return res.json(error.message);
     }
 };

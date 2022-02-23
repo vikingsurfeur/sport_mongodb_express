@@ -1,16 +1,22 @@
-const { slotGet, slotCreate, slotBook, slotUpdate, slotDelete  } = require('../controllers/slot');
+const {
+    slotGet,
+    slotCreate,
+    slotBook,
+    slotUpdate,
+    slotDelete,
+} = require("../controllers/slot");
 
 const slotRoute = (app) => {
     // Read
-    app.get('/slots', slotGet);
+    app.get("/slots", slotGet);
     // Create
-    app.post('/slot-create', slotCreate);
+    app.post("/slot-create", slotCreate);
     // Book
-    app.post('/slot-book', slotBook);
+    app.post("/slot-book", slotBook);
     // Delete
-    app.delete('/slot-delete', slotDelete);
+    app.delete("/slot-delete", slotDelete);
     // Update
-    app.post('/slot-update', slotUpdate);
-}
+    app.post("/slot-update", slotUpdate);
+};
 
 module.exports = slotRoute;

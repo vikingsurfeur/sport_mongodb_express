@@ -1,7 +1,7 @@
 // READ
 const subscriptionGet = async (req, res) => {
     try {
-        const Subscription = req.app.get('models').Subscription;
+        const Subscription = req.app.get("models").Subscription;
         const subscription = await Subscription.find();
         res.json(subscription);
     } catch (error) {
@@ -11,22 +11,22 @@ const subscriptionGet = async (req, res) => {
 
 // CREATE
 const subscriptionCreate = async (req, res) => {
-    if (req.role !== 'manager') {
+    if (req.role !== "manager") {
         return res.json({
             status: false,
-            message: 'unauthorized'
+            message: "unauthorized",
         });
     }
 
     if (!req.body) {
         return res.json({
             status: false,
-            message: 'missing request body',
+            message: "missing request body",
         });
     }
 
     try {
-        const models = req.app.get('models');
+        const models = req.app.get("models");
         const newSubscription = await new models.Subscription({
             beginningDate: req.body.beginningDate,
             endDate: req.body.endDate,
@@ -43,32 +43,32 @@ const subscriptionCreate = async (req, res) => {
     } catch (error) {
         res.json(error.message);
     }
-}
+};
 
 // UPDATE
 const subscriptionUpdate = async (req, res) => {
-    if (req.role !== 'manager') {
+    if (req.role !== "manager") {
         return res.json({
             status: false,
-            message: 'unauthorized'
+            message: "unauthorized",
         });
     }
 
     if (!req.body._id) {
         return res.json({
             status: false,
-            message: 'No _id provided',
+            message: "No _id provided",
         });
     }
 
     try {
-        const Subscription = await req.app.get('models').Subscription;
-        const toMofifySubscription = await Subscription.findById(req.body._id)
+        const Subscription = await req.app.get("models").Subscription;
+        const toMofifySubscription = await Subscription.findById(req.body._id);
 
         if (!toMofifySubscription) {
             return res.json({
                 status: false,
-                message: 'No subscription found',
+                message: "No subscription found",
             });
         }
 
@@ -80,36 +80,38 @@ const subscriptionUpdate = async (req, res) => {
     } catch (error) {
         return res.json(error.message);
     }
-}
+};
 
 // DELETE
 const subscriptionDelete = async (req, res) => {
-    if (req.role !== 'manager') {
+    if (req.role !== "manager") {
         return res.json({
             status: false,
-            message: 'unauthorized'
+            message: "unauthorized",
         });
     }
 
     if (!req.body._id) {
         return res.json({
             status: false,
-            message: 'No _id provided',
+            message: "No _id provided",
         });
     }
 
     try {
-        const Subscription = await req.app.get('models').Subscription;
+        const Subscription = await req.app.get("models").Subscription;
         const toDeleteSubscription = await Subscription.findById(req.body._id);
 
         if (!toDeleteSubscription) {
             return res.json({
                 status: false,
-                message: 'No subscription found',
+                message: "No subscription found",
             });
         }
 
-        const customer = await req.app.get('models').Customer.findById(toDeleteSubscription.customer);
+        const customer = await req.app
+            .get("models")
+            .Customer.findById(toDeleteSubscription.customer);
         const index = customer.subscriptions.indexOf(toDeleteSubscription._id);
 
         customer.subscriptions.splice(index, 1);
@@ -119,6 +121,11 @@ const subscriptionDelete = async (req, res) => {
     } catch (error) {
         return res.json(error.message);
     }
-}
+};
 
-module.exports = { subscriptionGet, subscriptionCreate, subscriptionUpdate, subscriptionDelete };
+module.exports = {
+    subscriptionGet,
+    subscriptionCreate,
+    subscriptionUpdate,
+    subscriptionDelete,
+};

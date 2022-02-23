@@ -2,17 +2,16 @@ const e = require("express");
 
 // READ
 const slotGet = async (req, res) => {
-
     try {
-        const Slots = await req.app.get('models').Slot;
+        const Slots = await req.app.get("models").Slot;
         const SlotsList = await Slots.find()
-            .populate('customers')
-            .populate('coach');
+            .populate("customers")
+            .populate("coach");
 
         if (!SlotsList) {
             return res.json({
                 status: false,
-                message: 'No Slots found'
+                message: "No Slots found",
             });
         }
 
@@ -20,16 +19,16 @@ const slotGet = async (req, res) => {
     } catch (error) {
         return res.json(error.message);
     }
-}
+};
 
 // CREATE
 const slotCreate = async (req, res) => {
-    if (req.role !== 'manager') {
-        return res.json('unautohrized');
+    if (req.role !== "manager") {
+        return res.json("unautohrized");
     }
 
     try {
-        const models = req.app.get('models');
+        const models = req.app.get("models");
 
         // Create the slots
         const NewSlot = await new models.Slot({
@@ -51,27 +50,28 @@ const slotCreate = async (req, res) => {
     } catch (error) {
         return res.json(error.message);
     }
-}
+};
 
 // BOOK
 const slotBook = async (req, res) => {
-    if (req.role !== 'manager') {
-        return res.json('unautohrized');
+    if (req.role !== "manager") {
+        return res.json("unautohrized");
     }
 
     try {
-        const models = req.app.get('models');
+        const models = req.app.get("models");
         const Slot = await models.Slot.findById(req.body.slot);
 
         if (Slot.customers.length >= Slot.peopleLimit) {
             return res.json({
                 status: false,
-                message: 'Slot is full'
+                message: "Slot is full",
             });
         }
 
-        const Customer = await models.Customer.findById(req.body.customer)
-            .populate('suscriptions');
+        const Customer = await models.Customer.findById(
+            req.body.customer
+        ).populate("suscriptions");
 
         // Check the subscription goes with the date
         let isSubscribed = false;
@@ -87,7 +87,7 @@ const slotBook = async (req, res) => {
         if (!isSubscribed) {
             return res.json({
                 status: false,
-                message: 'Customer is not subscribed to the date'
+                message: "Customer is not subscribed to the date",
             });
         } else {
             Slot.customers.push(Customer._id);
@@ -99,20 +99,20 @@ const slotBook = async (req, res) => {
     } catch (error) {
         return res.json(error.message);
     }
-}
+};
 
 // UPDATE
 const slotUpdate = async (req, res) => {
-    if (req.role !== 'coach') {
-        return res.json('unautohrized');
+    if (req.role !== "coach") {
+        return res.json("unautohrized");
     }
 
     try {
         if (!req.body._id) {
-            return res.json('No id provided');
+            return res.json("No id provided");
         }
 
-        const Slot = await req.app.get('models').Slot;
+        const Slot = await req.app.get("models").Slot;
 
         let toModifySlot = await Slot.findById(req.body._id);
         let toModifyKeys = Object.keys(req.body.toModify);
@@ -126,26 +126,26 @@ const slotUpdate = async (req, res) => {
     } catch (error) {
         return res.json(error.message);
     }
-}
+};
 
 // DELETE
 const slotDelete = async (req, res) => {
-    if (req.role !== 'coach') {
-        return res.json('unautohrized');
+    if (req.role !== "coach") {
+        return res.json("unautohrized");
     }
 
     try {
         if (!req.body._id) {
-            return res.json('No id provided');
+            return res.json("No id provided");
         }
 
-        const Slot = await req.app.get('models').Slot;
+        const Slot = await req.app.get("models").Slot;
         const toDeleteSlot = await Slot.findById(req.body._id);
 
         if (!toDeleteSlot) {
             return res.json({
                 status: false,
-                message: 'Slot is not empty'
+                message: "Slot is not empty",
             });
         }
 
@@ -166,11 +166,11 @@ const slotDelete = async (req, res) => {
         await toDeleteSlot.remove();
         res.json({
             status: true,
-            message: 'Slot deleted'
+            message: "Slot deleted",
         });
     } catch (error) {
         return res.json(error.message);
     }
-}
+};
 
 module.exports = { slotGet, slotCreate, slotBook, slotUpdate, slotDelete };

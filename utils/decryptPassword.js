@@ -1,5 +1,5 @@
-const SHA256 = require('crypto-js/sha256');
-const encodeBase64 = require('crypto-js/enc-base64');
+const SHA256 = require("crypto-js/sha256");
+const encodeBase64 = require("crypto-js/enc-base64");
 
 const decryptPassword = ({ salt, hash, token }, password) => {
     const toCompareHash = SHA256(`${password}${salt}`).toString(encodeBase64);
@@ -8,7 +8,7 @@ const decryptPassword = ({ salt, hash, token }, password) => {
         return { token };
     }
 
-    return 'Invalid Password';
+    return "Invalid Password";
 };
 
 module.exports = decryptPassword;

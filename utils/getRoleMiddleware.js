@@ -4,7 +4,7 @@ const getRoleMiddleware = async (req, res, next) => {
         return next();
     }
 
-    const User = req.app.get('models').User;
+    const User = req.app.get("models").User;
     const ToCheckUser = await User.findOne({ token: req.body.token });
 
     if (!ToCheckUser) {
@@ -14,6 +14,6 @@ const getRoleMiddleware = async (req, res, next) => {
 
     req.role = ToCheckUser.role;
     next();
-}
+};
 
 module.exports = getRoleMiddleware;

@@ -1,17 +1,17 @@
-const encryptPassword = require('../utils/encryptPassword');
+const encryptPassword = require("../utils/encryptPassword");
 
 // READ
 const customerGet = async (req, res) => {
     try {
-        const Customer = req.app.get('models').Customer;
+        const Customer = req.app.get("models").Customer;
         const CustomerList = await Customer.find()
-            .populate('user')
-            .populate('subscriptions');
+            .populate("user")
+            .populate("subscriptions");
 
         if (!CustomerList) {
             return res.json({
                 status: false,
-                message: 'No customers found',
+                message: "No customers found",
             });
         }
 
@@ -19,26 +19,25 @@ const customerGet = async (req, res) => {
     } catch (error) {
         return res.json(error.message);
     }
-}
+};
 
 // CREATE
 const customerCreate = async (req, res) => {
     if (!req.body.password) {
         return res.json({
             status: false,
-            message: 'No password provided',
+            message: "No password provided",
         });
     }
 
-
-    if (req.role !== 'manager') {
-        return res.json('unauthorized')
+    if (req.role !== "manager") {
+        return res.json("unauthorized");
     }
 
     try {
         const { token, salt, hash } = encryptPassword(req.body.password);
 
-        const models = req.app.get('models');
+        const models = req.app.get("models");
         const NewUser = await new models.User({
             firstName: req.body.firstName,
             lastName: req.body.lastName,
@@ -57,18 +56,18 @@ const customerCreate = async (req, res) => {
     } catch (error) {
         return res.json(error.message);
     }
-}
+};
 
 // UPDATE
 const customerUpdate = async (req, res) => {
-    if (req.role !== 'manager') {
-        return res.json('unauthorized')
+    if (req.role !== "manager") {
+        return res.json("unauthorized");
     }
 
     if (!req.body._id) {
         return res.json({
             status: false,
-            message: 'No _id provided',
+            message: "No _id provided",
         });
     }
 
@@ -76,17 +75,17 @@ const customerUpdate = async (req, res) => {
         if (!req.body._id || !req.body.toModifyCustomer) {
             return res.json({
                 status: false,
-                message: 'No id provided or no data user provided',
+                message: "No id provided or no data user provided",
             });
         }
 
-        const Customer = req.app.get('models').Customer;
+        const Customer = req.app.get("models").Customer;
         const toModifyCustomer = await Customer.findById(req.body._id);
 
         if (!toModifyCustomer) {
             return res.json({
                 status: false,
-                message: 'No customer found',
+                message: "No customer found",
             });
         }
 
@@ -95,33 +94,33 @@ const customerUpdate = async (req, res) => {
             toModifyCustomer[key] = req.body.toModifyCustomer[key];
         }
         await toModifyCustomer.save();
-        res.json('Successfully Updated');
+        res.json("Successfully Updated");
     } catch (error) {
         return res.json(error.message);
     }
-}
+};
 
 // DELETE
 const customerDelete = async (req, res) => {
     if (!req.body._id) {
         return res.json({
             status: false,
-            message: 'No _id provided',
+            message: "No _id provided",
         });
     }
 
-    if (req.role !== 'manager') {
-        return res.json('unauthorized')
+    if (req.role !== "manager") {
+        return res.json("unauthorized");
     }
 
     try {
-        const Customer = req.app.get('models').Customer;
+        const Customer = req.app.get("models").Customer;
         const toDeleteCustomer = await Customer.findById(req.body._id);
 
         if (!toDeleteCustomer) {
             return res.json({
                 status: false,
-                message: 'No customer found',
+                message: "No customer found",
             });
         }
 
@@ -129,10 +128,15 @@ const customerDelete = async (req, res) => {
 
         await toDeleteUser.remove();
         await toDeleteCustomer.remove();
-        res.json('Successfully Deleted');
+        res.json("Successfully Deleted");
     } catch (error) {
         return res.json(error.message);
     }
-}
+};
 
-module.exports = { customerGet, customerCreate, customerUpdate, customerDelete };
+module.exports = {
+    customerGet,
+    customerCreate,
+    customerUpdate,
+    customerDelete,
+};
