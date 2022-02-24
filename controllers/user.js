@@ -15,16 +15,11 @@ const userGet = async (req, res) => {
 
 // CREATE
 const userCreate = async (req, res) => {
-    if (!req.body.password) {
-        return res.json({
-            status: false,
-            message: "No password provided",
-        });
-    }
+    !req.body.password &&
+        res.json({ status: false, message: "No password provided" });
 
-    if (req.role !== "manager") {
-        return res.json("unauthorized");
-    }
+    req.body.role !== "manager" && 
+        res.json("unauthorized");
 
     try {
         const { token, salt, hash } = encryptPassword(req.body.password);
@@ -38,33 +33,15 @@ const userCreate = async (req, res) => {
             token,
             salt,
             hash,
-        }).save();
-
-        // if (NewUser) {
-        //     res.json({
-        //         status: true,
-        //         message: 'Successfully created',
-        //     });
-
-        //     const UserExist = await User.findOne({ email: req.body.email });
-        //     if (!UserExist) {
-        //         const NewUserExist = await new User({
-        //             firstName: req.body.firstName,
-        //             lastName: req.body.lastName,
-        //             dateOfBirth: req.body.dateOfBirth,
-        //             email: req.body.email,
-        //             token,
-        //             salt,
-        //             hash,
-        //         }).save();
-        //     } else {
-        //         res.json({
-        //             status: false,
-        //             message: 'User already exist',
-        //         });
-        //     }
-        // }
-        res.json(NewUser);
+        });
+        
+        const UserExist = await User.findOne({ email: req.body.email });
+        if (UserExist) {
+            res.json({ status: false, message: "User already exist" });
+        } else {
+            await NewUser.save();
+            res.json({ status: true, message: "User created" });
+        }
     } catch (error) {
         return res.json(error.message);
     }
@@ -79,20 +56,15 @@ const userDelete = async (req, res) => {
         });
     }
 
-    if (req.role !== "manager") {
-        return res.json("unauthorized");
-    }
+    req.body.role !== "manager" &&
+        res.json("unauthorized");
 
     try {
         const User = req.app.get("models").User;
         const ToDeleteUser = await User.findById(req.body._id);
 
-        if (!ToDeleteUser) {
-            return res.json({
-                status: false,
-                message: "User not found",
-            });
-        }
+        !ToDeleteUser &&
+            res.json({ status: false, message: "User not found" });
 
         await ToDeleteUser.remove();
 
@@ -104,34 +76,30 @@ const userDelete = async (req, res) => {
 
 // UPDATE
 const userUpdate = async (req, res) => {
-    if (!req.body._id || !req.body.toModifyUser) {
+    if (!req.body._id || !req.body.toModify) {
         return res.json({
             status: false,
             message: "No id provided or no data user provided",
         });
     }
 
-    if (req.role !== "manager") {
-        return res.json("unauthorized");
-    }
+    req.body.role !== "manager" &&
+        res.json("unauthorized");
+
 
     try {
         const User = req.app.get("models").User;
-        const toModifyUser = await User.findById(req.body._id);
+        const ToModifyUser = await User.findById(req.body._id);
+        const toModifyKeys = Object.keys(req.body.toModify);
+        
+        !ToModifyUser &&
+            res.json({ status: false, message: "User not found" });
 
-        if (!toModifyUser) {
-            return res.json({
-                status: false,
-                message: "No user found",
-            });
-        }
-
-        const toModifyKeys = Object.keys(req.body.toModifyUser);
         for (const key of toModifyKeys) {
-            toModifyUser[key] = req.body.toModifyUser[key];
+            ToModifyUser[key] = req.body.toModify[key];
         }
 
-        await toModifyUser.save();
+        await ToModifyUser.save();
 
         res.json("Successfully Updated");
     } catch (error) {
@@ -153,12 +121,10 @@ const userLogin = async (req, res) => {
         const ToVerifyUser = await User.findOne({
             email: req.body.email,
         });
-        if (!ToVerifyUser) {
-            return res.json({
-                status: false,
-                message: "User not found",
-            });
-        }
+
+        !ToVerifyUser && 
+            res.json({ status: false, message: "User not found" });
+            
         res.json(decryptPassword(ToVerifyUser, req.body.password));
     } catch (error) {
         return res.json(error.message);
