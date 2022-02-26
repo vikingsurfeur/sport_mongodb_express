@@ -8,14 +8,13 @@ const slotGet = async (req, res) => {
             .populate("customers")
             .populate("coach");
 
-        if (!SlotsList) {
-            return res.json({
+        !SlotsList &&
+            res.json({
                 status: false,
-                message: "No Slots found",
+                message: "No slots found",
             });
-        }
 
-        return res.json(slots);
+        return res.json(Slots);
     } catch (error) {
         return res.json(error.message);
     }
@@ -23,9 +22,17 @@ const slotGet = async (req, res) => {
 
 // CREATE
 const slotCreate = async (req, res) => {
-    if (req.role !== "manager") {
-        return res.json("unautohrized");
-    }
+    !req.body.role === "manager" &&
+        res.json({
+            status: false,
+            message: "unauthorized",
+        });
+
+    !req.body &&
+        res.json({
+            status: false,
+            message: "missing request body",
+        });
 
     try {
         const models = req.app.get("models");
@@ -43,8 +50,8 @@ const slotCreate = async (req, res) => {
 
         // Add the coach
         const coach = await models.Coach.findById(req.body.coach);
-        theCoach.slots.push(NewSlot._id);
-        theCoach.save();
+        coach.slots.push(NewSlot._id);
+        coach.save();
 
         return res.json(NewSlot);
     } catch (error) {
@@ -54,9 +61,11 @@ const slotCreate = async (req, res) => {
 
 // BOOK
 const slotBook = async (req, res) => {
-    if (req.role !== "manager") {
-        return res.json("unautohrized");
-    }
+    !req.body.role === "manager" &&
+        res.json({
+            status: false,
+            message: "unauthorized",
+        });
 
     try {
         const models = req.app.get("models");
@@ -92,37 +101,15 @@ const slotBook = async (req, res) => {
         } else {
             Slot.customers.push(Customer._id);
             await Slot.save();
+
             Customer.slots.push(Slot._id);
             await Customer.save();
-            return res.json("Booked!");
+
+            return res.json({
+                status: true,
+                message: "Slot booked",
+            });
         }
-    } catch (error) {
-        return res.json(error.message);
-    }
-};
-
-// UPDATE
-const slotUpdate = async (req, res) => {
-    if (req.role !== "coach") {
-        return res.json("unautohrized");
-    }
-
-    try {
-        if (!req.body._id) {
-            return res.json("No id provided");
-        }
-
-        const Slot = await req.app.get("models").Slot;
-
-        let toModifySlot = await Slot.findById(req.body._id);
-        let toModifyKeys = Object.keys(req.body.toModify);
-
-        for (const key of toModifyKeys) {
-            toModifySlot[key] = req.body.toModify[key];
-        }
-
-        await toModifySlot.save();
-        res.json(toModifySlot);
     } catch (error) {
         return res.json(error.message);
     }
@@ -130,14 +117,10 @@ const slotUpdate = async (req, res) => {
 
 // DELETE
 const slotDelete = async (req, res) => {
-    if (req.role !== "coach") {
-        return res.json("unautohrized");
-    }
+    !req.body.role !== "role" && res.json("unauthorized");
 
     try {
-        if (!req.body._id) {
-            return res.json("No id provided");
-        }
+        !req.body._id && res.json("No id provided");
 
         const Slot = await req.app.get("models").Slot;
         const toDeleteSlot = await Slot.findById(req.body._id);
@@ -151,10 +134,10 @@ const slotDelete = async (req, res) => {
 
         // Delete the slot to all customers
         for (const customer of toDeleteSlot.customers) {
-            let customer = await models.Customer.findById(customer);
-            let toDeleteIndex = customer.slots.indexOf(toDeleteSlot._id);
-            customer.slots.splice(toDeleteIndex, 1);
-            await customer.save();
+            let theCustomer = await models.Customer.findById(customer);
+            let toDeleteIndex = theCustomer.slots.indexOf(toDeleteSlot._id);
+            theCustomer.slots.splice(toDeleteIndex, 1);
+            await theCustomer.save();
         }
 
         // Delete the slot to the coach
@@ -164,6 +147,7 @@ const slotDelete = async (req, res) => {
         await coach.save();
 
         await toDeleteSlot.remove();
+
         res.json({
             status: true,
             message: "Slot deleted",
@@ -173,4 +157,50 @@ const slotDelete = async (req, res) => {
     }
 };
 
-module.exports = { slotGet, slotCreate, slotBook, slotUpdate, slotDelete };
+// UPDATE
+const slotUpdate = async (req, res) => {
+    !req.body.role !== "coach" && 
+        res.json({
+            status: false,
+            message: "unauthorized"
+        });
+
+    !req.body._id &&
+        res.json({
+            status: false,
+            message: "No _id provided",
+        });
+
+    try {
+        !req.body._id && 
+            res.json({
+                status: false,
+                message: "No id provided"
+            });
+
+        const Slot = await req.app.get("models").Slot;
+        let toModifySlot = await Slot.findById(req.body._id);
+        let toModifyKeys = Object.keys(req.body.toModify);
+
+        for (const key of toModifyKeys) {
+            toModifySlot[key] = req.body.toModify[key];
+        }
+
+        await toModifySlot.save();
+
+        res.json({
+            status: true,
+            message: "Slot updated",
+        });
+    } catch (error) {
+        return res.json(error.message);
+    }
+};
+
+module.exports = { 
+    slotGet, 
+    slotCreate, 
+    slotBook, 
+    slotUpdate, 
+    slotDelete 
+};

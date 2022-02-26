@@ -16,10 +16,16 @@ const userGet = async (req, res) => {
 // CREATE
 const userCreate = async (req, res) => {
     !req.body.password &&
-        res.json({ status: false, message: "No password provided" });
+        res.json({ 
+            status: false, 
+            message: "No password provided" 
+        });
 
     req.body.role !== "manager" && 
-        res.json("unauthorized");
+        res.json({
+            status: false,
+            message: "unauthorized"
+        });
 
     try {
         const { token, salt, hash } = encryptPassword(req.body.password);
@@ -37,10 +43,16 @@ const userCreate = async (req, res) => {
         
         const UserExist = await User.findOne({ email: req.body.email });
         if (UserExist) {
-            res.json({ status: false, message: "User already exist" });
+            res.json({ 
+                status: false, 
+                message: "User already exist" 
+            });
         } else {
             await NewUser.save();
-            res.json({ status: true, message: "User created" });
+            res.json({ 
+                status: true, 
+                message: "User created" 
+            });
         }
     } catch (error) {
         return res.json(error.message);
@@ -56,19 +68,28 @@ const userDelete = async (req, res) => {
         });
     }
 
-    req.body.role !== "manager" &&
-        res.json("unauthorized");
+    req.body.role !== "manager" && 
+        res.json({
+            status: false,
+            message: "unauthorized"
+        });
 
     try {
         const User = req.app.get("models").User;
         const ToDeleteUser = await User.findById(req.body._id);
 
         !ToDeleteUser &&
-            res.json({ status: false, message: "User not found" });
+            res.json({ 
+                status: false, 
+                message: "User not found" 
+            });
 
         await ToDeleteUser.remove();
 
-        res.json("Successfully Deleted");
+        res.json({
+            status: true,
+            message: "Successfully Deleted"
+        });
     } catch (error) {
         return res.json(error.message);
     }
@@ -83,9 +104,11 @@ const userUpdate = async (req, res) => {
         });
     }
 
-    req.body.role !== "manager" &&
-        res.json("unauthorized");
-
+    req.body.role !== "manager" && 
+        res.json({
+            status: false,
+            message: "unauthorized"
+        });
 
     try {
         const User = req.app.get("models").User;
@@ -93,7 +116,10 @@ const userUpdate = async (req, res) => {
         const toModifyKeys = Object.keys(req.body.toModify);
         
         !ToModifyUser &&
-            res.json({ status: false, message: "User not found" });
+            res.json({ 
+                status: false, 
+                message: "User not found" 
+            });
 
         for (const key of toModifyKeys) {
             ToModifyUser[key] = req.body.toModify[key];
@@ -101,7 +127,10 @@ const userUpdate = async (req, res) => {
 
         await ToModifyUser.save();
 
-        res.json("Successfully Updated");
+        res.json({
+            status: false,
+            message: "Successfully Updated"
+        });
     } catch (error) {
         return res.json(error.message);
     }
@@ -123,7 +152,10 @@ const userLogin = async (req, res) => {
         });
 
         !ToVerifyUser && 
-            res.json({ status: false, message: "User not found" });
+            res.json({ 
+                status: false, 
+                message: "User not found" 
+            });
             
         res.json(decryptPassword(ToVerifyUser, req.body.password));
     } catch (error) {
@@ -131,4 +163,10 @@ const userLogin = async (req, res) => {
     }
 };
 
-module.exports = { userGet, userCreate, userDelete, userUpdate, userLogin };
+module.exports = { 
+    userGet, 
+    userCreate, 
+    userDelete, 
+    userUpdate, 
+    userLogin 
+};

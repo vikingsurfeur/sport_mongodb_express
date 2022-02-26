@@ -14,7 +14,7 @@ const slotRoute = (app) => {
     // Book
     app.post("/slot-book", slotBook);
     // Delete
-    app.delete("/slot-delete", slotDelete);
+    app.post("/slot-delete", slotDelete);
     // Update
     app.post("/slot-update", slotUpdate);
 };

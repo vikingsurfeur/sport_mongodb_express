@@ -15,12 +15,11 @@ const coachGet = async (req, res) => {
             CoachList = await Coach.find().populate("user");
         }
 
-        if (!CoachList) {
-            return res.json({
+        !CoachList &&
+            res.json({
                 status: false,
-                message: "No coachs found",
+                message: "No coach found",
             });
-        }
 
         res.json(CoachList);
     } catch (error) {
@@ -30,21 +29,22 @@ const coachGet = async (req, res) => {
 
 // CREATE
 const coachCreate = async (req, res) => {
-    if (!req.body.password) {
-        return res.json({
+    !req.body.password &&
+        res.json({
             status: false,
             message: "No password provided",
         });
-    }
 
-    if (req.role !== "manager") {
-        return res.json("unauthorized");
-    }
+    req.body.role !== "manager" && 
+        res.json({
+            status: false,
+            message: "unauthorized"
+        });
 
     try {
         const { token, salt, hash } = encryptPassword(req.body.password);
-
         const models = req.app.get("models");
+
         const NewUser = await new models.User({
             firstName: req.body.firstName,
             lastName: req.body.lastName,
@@ -66,21 +66,61 @@ const coachCreate = async (req, res) => {
     }
 };
 
-// UPDATE
-const coachUpdate = async (req, res) => {
-    if (req.role !== "manager") {
-        return res.json("unauthorized");
-    }
-
-    if (!req.body._id) {
-        return res.json({
+// DELETE
+const coachDelete = async (req, res) => {
+    !req.body._id &&
+        res.json({
             status: false,
             message: "No _id provided",
         });
-    }
+
+    req.body.role !== "manager" && 
+        res.json({
+            status: false,
+            message: "unauthorized"
+        });
 
     try {
-        if (!req.body._id || !req.body.toModifyCoach) {
+        const Coach = req.app.get("models").Coach;
+        const ToDeleteCoach = await Coach.findById(req.body._id);
+        const models = req.app.get("models");
+
+        !ToDeleteCoach &&
+            res.json({
+                status: false,
+                message: "No coach found",
+            });
+
+        const ToDeleteUser = await models.User.findById(ToDeleteCoach.user);
+
+        await ToDeleteUser.remove();
+        await ToDeleteCoach.remove();
+
+        res.json({
+            status: true,
+            message: "Successfully Deleted"
+        });
+    } catch (error) {
+        return res.json(error.message);
+    }
+};
+
+// UPDATE
+const coachUpdate = async (req, res) => {
+    !req.body._id &&
+        res.json({
+            status: false,
+            message: "No _id provided",
+        });
+
+    req.body.role !== "manager" && 
+        res.json({
+            status: false,
+            message: "unauthorized"
+        });
+            
+    try {
+        if (!req.body._id || !req.body.toModify) {
             return res.json({
                 status: false,
                 message: "No id provided or no data user provided",
@@ -88,58 +128,33 @@ const coachUpdate = async (req, res) => {
         }
 
         const Coach = req.app.get("models").Coach;
-        const toModifyCoach = await Coach.findById(req.body._id);
+        const ToModifyCoach = await Coach.findById(req.body._id);
+        const toModifyKeys = Object.keys(req.body.toModify);
 
-        if (!toModifyCoach) {
-            return res.json({
+        !ToModifyCoach &&
+            res.json({
                 status: false,
                 message: "No coach found",
             });
-        }
 
-        const toModifyKeys = Object.keys(req.body.toModifyCoach);
         for (const key of toModifyKeys) {
-            toModifyCoach[key] = req.body.toModifyCoach[key];
+            ToModifyCoach[key] = req.body.toModify[key];
         }
-        await toModifyCoach.save();
-        res.json("Successfully Updated");
-    } catch (error) {
-        return res.json(error.message);
-    }
-};
 
-// DELETE
-const coachDelete = async (req, res) => {
-    if (!req.body._id) {
-        return res.json({
-            status: false,
-            message: "No _id provided",
+        await ToModifyCoach.save();
+
+        res.json({
+            status: true,
+            message: "Successfully updated",
         });
-    }
-
-    if (req.role !== "manager") {
-        return res.json("unauthorized");
-    }
-
-    try {
-        const Coach = req.app.get("models").Coach;
-        const toDeleteCoach = await Coach.findById(req.body._id);
-
-        if (!toDeleteCoach) {
-            return res.json({
-                status: false,
-                message: "No coach found",
-            });
-        }
-
-        const toDeleteUser = await models.User.findById(toDeleteCoach.user);
-
-        await toDeleteUser.remove();
-        await toDeleteCoach.remove();
-        res.json("Successfully Deleted");
     } catch (error) {
         return res.json(error.message);
     }
 };
 
-module.exports = { coachGet, coachCreate, coachUpdate, coachDelete };
+module.exports = { 
+    coachGet, 
+    coachCreate, 
+    coachUpdate, 
+    coachDelete 
+};

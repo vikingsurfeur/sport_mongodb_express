@@ -11,7 +11,7 @@ const customerRoute = (app) => {
     // Create
     app.post("/customer-create", customerCreate);
     // Delete
-    app.delete("/customer-delete", customerDelete);
+    app.post("/customer-delete", customerDelete);
     // Update
     app.post("/customer-update", customerUpdate);
 };

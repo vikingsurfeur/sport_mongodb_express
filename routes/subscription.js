@@ -11,7 +11,7 @@ const subscriptionRoute = (app) => {
     // Create
     app.post("/subscription-create", subscriptionCreate);
     // Delete
-    app.delete("/subscription-delete", subscriptionDelete);
+    app.post("/subscription-delete", subscriptionDelete);
     // Update
     app.post("/subscription-update", subscriptionUpdate);
 };

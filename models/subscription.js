@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const subscriptionSchema = new mongoose.Schema({
+const SubscriptionSchema = new mongoose.Schema({
     beginningDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
     paymentMethod: { type: String, required: true },
@@ -8,4 +8,6 @@ const subscriptionSchema = new mongoose.Schema({
     customer: { type: mongoose.Schema.Types.ObjectId, ref: "Customer" },
 });
 
-module.exports = subscriptionSchema;
+const Subscription = new mongoose.model("Subscription", SubscriptionSchema);
+
+module.exports = Subscription;

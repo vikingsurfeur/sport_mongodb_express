@@ -11,7 +11,7 @@ const coachRoute = (app) => {
     // Create
     app.post("/coach-create", coachCreate);
     // Delete
-    app.delete("/coach-delete", coachDelete);
+    app.post("/coach-delete", coachDelete);
     // Update
     app.post("/coach-update", coachUpdate);
 };
